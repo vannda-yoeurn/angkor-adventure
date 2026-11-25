@@ -1,0 +1,17 @@
+{
+  "name": "angkor-the-adventure",
+  "version": "1.0.0",
+  "description": "អង្គរ: ដំណើរផ្សងព្រេង — Khmer 3D third-person adventure game (Three.js + Socket.io)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  },
+  "license": "MIT"
+}

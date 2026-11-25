@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>អង្គរ: ដំណើរផ្សងព្រេង</title>
+<!-- ពុម្ពអក្សរខ្មែរ៖ Moul (ចំណងជើង) និង Kantumruy Pro (អត្ថបទ) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kantumruy+Pro:wght@400;600;700&family=Moul&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<!-- App (PWA)៖ ដំឡើងលើ Home Screen -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#8e1b16">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="អង្គរ">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+</head>
+<body>
+
+<!-- ផ្ទាំងគូរ 3D -->
+<canvas id="game"></canvas>
+<div id="floats"></div>
+
+<!-- អេក្រង់កំពុងផ្ទុក -->
+<div id="loading" class="loading">
+  <div class="loading-title">អង្គរ</div>
+  <div data-i18n="loading">កំពុងសាងសង់ទីក្រុងអង្គរ...</div>
+</div>
+
+<!-- ================= ម៉ឺនុយដើម ================= -->
+<div id="menu" class="menu" hidden>
+  <div class="menu-panel">
+    <header class="menu-head">
+      <h1 class="title"><span class="t1" data-i18n="title1">អង្គរ</span><span class="t2" data-i18n="title2">ដំណើរផ្សងព្រេង</span></h1>
+      <p class="subtitle">Angkor: The Adventure</p>
+      <div class="toggles">
+        <button id="langBtn" class="chip" type="button">English</button>
+        <button id="soundBtn" class="chip" type="button" aria-pressed="true"><span data-i18n="sound">សំឡេង</span>: <b id="soundState">✓</b></button>
+      </div>
+    </header>
+
+    <section class="setup">
+      <label class="field"><span data-i18n="yourName">ឈ្មោះរបស់អ្នក</span>
+        <input id="nameInput" maxlength="16" autocomplete="off" value="វីរជន">
+      </label>
+      <div class="field">
+        <span data-i18n="chooseHero">ជ្រើសរើសតួអង្គ</span>
+        <div class="seg" id="genderSeg">
+          <button type="button" data-g="m" class="on" data-i18n="male">ប្រុស</button>
+          <button type="button" data-g="f" data-i18n="female">ស្រី</button>
+        </div>
+      </div>
+      <div class="field">
+        <span data-i18n="outfit">សម្លៀកបំពាក់</span>
+        <div class="swatches" id="outfitSeg"></div>
+      </div>
+      <div class="field">
+        <span data-i18n="weaponLbl">អាវុធ</span>
+        <div class="seg" id="weaponSeg">
+          <button type="button" data-w="sword" class="on" data-i18n="wSwordName">ដាវ</button>
+          <button type="button" data-w="knife" data-i18n="wKnifeName">កាំបិត</button>
+        </div>
+      </div>
+    </section>
+
+    <h2 class="section-title" data-i18n="chooseMode">ជ្រើសរើសរបៀបលេង</h2>
+    <section class="modes" id="modes">
+      <button class="mode" data-mode="adventure" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 40h32M12 40V24l12-14 12 14v16M20 40v-9h8v9M24 10V4" /></svg>
+        <b data-i18n="modeAdventure">ផ្សងព្រេង</b><small data-i18n="descAdventure"></small>
+      </button>
+      <button class="mode" data-mode="combat" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M10 38 34 8l4 2-24 30zM38 38 14 8l-4 2 24 30zM8 34l6 6M40 34l-6 6" /></svg>
+        <b data-i18n="modeCombat">ប្រយុទ្ធ</b><small data-i18n="descCombat"></small>
+      </button>
+      <button class="mode" data-mode="missions" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 6h20l6 6v30H12zM18 18h14M18 25h14M18 32h9" /></svg>
+        <b data-i18n="modeMissions">បេសកកម្ម</b><small data-i18n="descMissions"></small>
+      </button>
+      <button class="mode" data-mode="racing" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="12" cy="33" r="6"/><circle cx="36" cy="33" r="6"/><path d="M12 33l8-12h10l6 12M26 21l-3-6h-5" /></svg>
+        <b data-i18n="modeRacing">ប្រណាំង</b><small data-i18n="descRacing"></small>
+      </button>
+      <button class="mode" data-mode="multiplayer" type="button">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="17" cy="16" r="6"/><circle cx="33" cy="16" r="6"/><path d="M6 40c1-8 6-12 11-12s10 4 11 12M22 40c1-8 6-12 11-12s10 4 11 12" /></svg>
+        <b data-i18n="modeMulti">ពហុអ្នកលេង</b><small data-i18n="descMulti"></small>
+      </button>
+    </section>
+
+    <details class="controls">
+      <summary data-i18n="controls">ការគ្រប់គ្រង</summary>
+      <ul>
+        <li><kbd>W A S D</kbd> <span data-i18n="c_move"></span></li>
+        <li><kbd>Mouse</kbd> <span data-i18n="c_look"></span></li>
+        <li><kbd>🖱 L</kbd> <span data-i18n="c_attack"></span></li>
+        <li><kbd>Space</kbd> <span data-i18n="c_jump"></span></li>
+        <li><kbd>Shift</kbd> <span data-i18n="c_run"></span></li>
+        <li><kbd>E</kbd> <span data-i18n="c_act"></span></li>
+        <li><kbd>1</kbd> <kbd>2</kbd> <span data-i18n="c_weap"></span></li>
+        <li><kbd>Esc</kbd> <span data-i18n="c_pause"></span></li>
+        <li><kbd>T</kbd> <span data-i18n="c_chat"></span></li>
+        <li class="wide"><kbd>📱</kbd> <span data-i18n="c_touch"></span></li>
+      </ul>
+    </details>
+  </div>
+</div>
+
+<!-- ================= HUD ក្នុងហ្គេម ================= -->
+<div id="hud" class="hud" hidden>
+  <div class="stats">
+    <div class="who" id="hudName">វីរជន</div>
+    <div class="meter"><span data-i18n="hp">ជីវិត</span><div class="bar hp"><i id="hpBar"></i></div><b id="hpTxt">100</b></div>
+    <div class="meter"><span data-i18n="stamina">ថាមពល</span><div class="bar st"><i id="stBar"></i></div><b id="stTxt">100</b></div>
+    <div class="money"><span data-i18n="money">ប្រាក់</span> <b id="moneyTxt">0 ៛</b></div>
+  </div>
+
+  <div class="minimap"><canvas id="minimap" width="200" height="200"></canvas><span class="north">N</span></div>
+
+  <div id="objective" class="objective" hidden><h3 id="objTitle"></h3><ul id="objList"></ul></div>
+
+  <div id="racebox" class="racebox" hidden>
+    <div><small data-i18n="racePos">លំដាប់</small><b id="rPos">1/4</b></div>
+    <div><small data-i18n="raceLap">ជុំ</small><b id="rLap">1/2</b></div>
+    <div><small data-i18n="raceTime">ពេល</small><b id="rTime">0:00.00</b></div>
+  </div>
+
+  <div class="weapon" id="weaponBox">
+    <span class="slot" data-w="sword"><kbd>1</kbd> <span data-i18n="wSwordName">ដាវ</span></span>
+    <span class="slot" data-w="knife"><kbd>2</kbd> <span data-i18n="wKnifeName">កាំបិត</span></span>
+  </div>
+  <div class="speedo" id="speedo" hidden><b id="speedTxt">0</b><small data-i18n="speedUnit">គ.ម/ម៉</small></div>
+
+  <div id="prompt" class="prompt" hidden></div>
+  <div id="toasts" class="toasts" aria-live="polite"></div>
+  <div id="bigText" class="bigtext"></div>
+  <div id="lockHint" class="lockhint" data-i18n="clickToPlay" hidden></div>
+
+  <!-- ឧបករណ៍បញ្ជាលើទូរស័ព្ទ (បង្ហាញតែលើអេក្រង់ប៉ះ) -->
+  <div id="touchUI" class="touchui" hidden>
+    <div id="joyZone" class="joyzone"><div id="joyBase" class="joybase"><div id="joyKnob" class="joyknob"></div></div></div>
+    <div id="lookZone" class="lookzone"></div>
+    <div class="tbtns">
+      <button type="button" class="tb atk" data-t="attack" data-i18n="t_attack">វាយ</button>
+      <button type="button" class="tb jump" data-t="jump" data-i18n="t_jump">លោត</button>
+      <button type="button" class="tb run" data-t="run" data-i18n="t_run">រត់</button>
+      <button type="button" class="tb act" data-t="act" id="actBtn">E</button>
+      <button type="button" class="tb wpn" data-t="weapon" data-i18n="t_weapon">អាវុធ</button>
+    </div>
+    <div class="ttop">
+      <button type="button" class="tb small" data-t="chat" id="chatBtn" data-i18n="t_chat" hidden>ជជែក</button>
+      <button type="button" class="tb small" data-t="full" data-i18n="t_full">ពេញអេក្រង់</button>
+      <button type="button" class="tb small" data-t="pause" data-i18n="t_pause">ផ្អាក</button>
+    </div>
+  </div>
+
+  <div id="chat" class="chat" hidden>
+    <div id="chatLog" class="chatlog"></div>
+    <input id="chatInput" class="chatinput" maxlength="120" autocomplete="off" hidden>
+  </div>
+</div>
+<div class="hurtfx" id="hurtfx"></div>
+
+<!-- ================= ផ្ទាំងសន្ទនា / លទ្ធផល ================= -->
+<div id="dialog" class="modal" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="dlgTitle">
+    <h2 id="dlgTitle"></h2>
+    <div id="dlgBody" class="dlg-body"></div>
+    <div id="dlgBtns" class="btns"></div>
+  </div>
+</div>
+
+<!-- ផ្អាកហ្គេម -->
+<div id="pause" class="modal" hidden>
+  <div class="panel">
+    <h2 data-i18n="paused">ផ្អាកហ្គេម</h2>
+    <div class="btns col">
+      <button id="resumeBtn" class="btn gold" data-i18n="resume">លេងបន្ត</button>
+      <button id="musicBtn" class="btn"><span data-i18n="music">តន្ត្រី</span>: <b id="musicState">✓</b></button>
+      <button id="menuBtn" class="btn" data-i18n="backMenu">ត្រឡប់ទៅម៉ឺនុយ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ជ្រើសផ្លូវប្រណាំង -->
+<div id="raceSelect" class="modal" hidden>
+  <div class="panel">
+    <h2 data-i18n="raceSelect">ជ្រើសរើសផ្លូវប្រណាំង</h2>
+    <div class="btns col">
+      <button class="btn gold" data-route="city-moto" data-i18n="route_city-moto"></button>
+      <button class="btn gold" data-route="city-car" data-i18n="route_city-car"></button>
+      <button class="btn gold" data-route="river-boat" data-i18n="route_river-boat"></button>
+      <button class="btn" data-close data-i18n="cancel">បោះបង់</button>
+    </div>
+  </div>
+</div>
+
+<!-- ភ្ជាប់ពហុអ្នកលេង -->
+<div id="mpPanel" class="modal" hidden>
+  <div class="panel">
+    <h2 data-i18n="mpTitle">ពហុអ្នកលេង</h2>
+    <p class="note" data-i18n="mpNote"></p>
+    <label class="field"><span data-i18n="mpServer"></span><input id="mpUrl" autocomplete="off"></label>
+    <label class="field"><span data-i18n="mpRoom"></span><input id="mpRoom" value="angkor" maxlength="20" autocomplete="off"></label>
+    <p id="mpStatus" class="status" role="status"></p>
+    <div class="btns">
+      <button id="mpConnect" class="btn gold" data-i18n="mpConnect">ភ្ជាប់</button>
+      <button class="btn" data-close data-i18n="cancel">បោះបង់</button>
+    </div>
+  </div>
+</div>
+
+<!-- បណ្ណាល័យ៖ Three.js, Howler.js, Socket.io (client) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+<!-- កូដហ្គេម -->
+<script src="game.js"></script>
+<script src="multiplayer.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
